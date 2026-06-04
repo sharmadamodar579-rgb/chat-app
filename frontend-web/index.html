@@ -14,6 +14,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
   <!-- Stylesheet -->
   <link rel="stylesheet" href="style.css">
+
+  <script>
+    function togglePassword(id) {
+      const el = document.getElementById(id);
+      if (el.type === 'password') {
+        el.type = 'text';
+      } else {
+        el.type = 'password';
+      }
+    }
+  </script>
 </head>
 <body class="not-logged-in">
 
@@ -113,6 +124,7 @@
             <div class="input-container">
               <span class="input-icon">🔒</span>
               <input type="password" id="login-password" placeholder="Enter password...">
+   <button type="button" class="btn-toggle-password" onclick="togglePassword('login-password')" style="background:none; border:none; cursor:pointer; color:#aaa; font-size:1.1rem;">👁️</button>
             </div>
 
             <div class="form-actions" style="margin-top: 6px;">
@@ -186,6 +198,7 @@
             <div class="input-container">
               <span class="input-icon">🔒</span>
               <input type="password" id="signup-password" placeholder="Choose password...">
+   <button type="button" class="btn-toggle-password" onclick="togglePassword('signup-password')" style="background:none; border:none; cursor:pointer; color:#aaa; font-size:1.1rem;">👁️</button>
             </div>
 
             <!-- Profile Type Selector -->
@@ -217,6 +230,7 @@
             <div class="input-container">
               <span class="input-icon">🔒</span>
               <input type="password" id="reset-new-password" placeholder="New password...">
+   <button type="button" class="btn-toggle-password" onclick="togglePassword('reset-new-password')" style="background:none; border:none; cursor:pointer; color:#aaa; font-size:1.1rem;">👁️</button>
             </div>
 
             <div class="form-actions">
@@ -471,8 +485,8 @@
             <div class="input-group">
               <label>Media Source</label>
               <div style="display: flex; gap: 8px; width: 100%;">
-                <input type="text" id="post-media-url" placeholder="Paste an image or mp4 URL..." required style="flex: 1;">
-                <button type="button" id="btn-camera-snap-post" class="btn btn-secondary" style="padding: 10px 14px; border-radius: 12px; display: flex; align-items: center; gap: 6px;"><span style="font-size:1rem;">📷</span> Snap</button>
+                <input type="file" id="post-media-file" accept="image/*,video/*" capture="environment" style="flex: 1; background: rgba(0,0,0,0.3); color: white; border-radius: 8px; padding: 5px;">
+                <button type="button" id="btn-camera-snap-post" style="display:none;" class="btn btn-secondary" style="padding: 10px 14px; border-radius: 12px; display: flex; align-items: center; gap: 6px;"><span style="font-size:1rem;">📷</span> Snap</button>
               </div>
               
               <!-- Quick Stock Templates -->

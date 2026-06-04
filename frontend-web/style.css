@@ -2370,3 +2370,27 @@ body.theme-light #draw-canvas {
 
 
 
+
+/* --- SPIDERMAN THEME UPDATES --- */
+body {
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), url('spiderman-theme.png') no-repeat center center fixed !important;
+  background-size: cover !important;
+  color: #ffffff !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+.glass {
+  background: rgba(20, 20, 25, 0.65) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 100, 100, 0.2) !important;
+}
+.btn-primary {
+  background: linear-gradient(135deg, #e23636, #500808) !important;
+  border-color: #ff4444 !important;
+  color: white !important;
+}
+h1, h2, h3, h4, h5, .step-title {
+  color: #ffcccc !important;
+}
+.sub-text, .step-sub, .bio-text, .track-artist {
+  color: #dddddd !important;
+}
