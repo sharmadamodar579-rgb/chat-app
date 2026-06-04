@@ -4,7 +4,8 @@ const API_BASE_URL = '/api';
 let state = {
   users: [],             // Array of all profiles
   currentUser: null,     // Active user object { username, profile_picture, bio }
-  activeTab: 'feed',     // Current nav tab: feed, reels, messages, create, profile
+  activeTab: 'feed',
+  viewingProfile: null,     // Current nav tab: feed, reels, messages, create, profile
   activeChatPartner: null, // User object of the active chat partner
   chatPollInterval: null,  // Interval to poll chat messages
   feedPollInterval: null,  // Interval to poll feed
@@ -94,6 +95,7 @@ document.addEventListener('click', (e) => {
 });
 
 async function viewUserProfile(username) {
+  state.viewingProfile = username;
   // Switch to profile tab
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.querySelector('.nav-item[data-tab="profile"]').classList.add('active');
@@ -118,8 +120,49 @@ async function viewUserProfile(username) {
     const btnFollowToggle = document.getElementById('btn-follow-toggle');
     
     if (username === state.currentUser.username) {
-      if (btnEditBio) btnEditBio.classList.remove('hidden');
       if (btnFollowToggle) btnFollowToggle.classList.add('hidden');
+      
+    const btnEditBio = document.getElementById('btn-edit-bio-toggle');
+    const bioEditBox = document.getElementById('bio-edit-box');
+    const inputBio = document.getElementById('input-bio');
+    const btnSaveBio = document.getElementById('btn-save-bio');
+    const btnCancelBio = document.getElementById('btn-cancel-bio');
+
+    if (username === state.currentUser.username) {
+      if (btnEditBio) {
+        btnEditBio.classList.remove('hidden');
+        btnEditBio.onclick = () => {
+          bioEditBox.classList.remove('hidden');
+          profileBio.classList.add('hidden');
+          inputBio.value = profileUser.bio || '';
+        };
+      }
+      if (btnCancelBio) {
+        btnCancelBio.onclick = () => {
+          bioEditBox.classList.add('hidden');
+          profileBio.classList.remove('hidden');
+        };
+      }
+      if (btnSaveBio) {
+        btnSaveBio.onclick = async () => {
+          const newBio = inputBio.value.trim();
+          try {
+            const res = await fetch(`${API_BASE_URL}/users/update-bio`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ username: state.currentUser.username, bio: newBio })
+            });
+            if (res.ok) {
+              profileBio.textContent = newBio;
+              state.currentUser.bio = newBio;
+              bioEditBox.classList.add('hidden');
+              profileBio.classList.remove('hidden');
+            }
+          } catch(e) { console.error(e); }
+        };
+      }
+    }
+
     } else {
       if (btnEditBio) btnEditBio.classList.add('hidden');
       if (btnFollowToggle) {
@@ -158,6 +201,20 @@ async function viewUserProfile(username) {
       return `<div class="gallery-item"><img src="${p.media_url}"></div>`;
     }).join('');
   }
+}
+
+
+window.deletePost = async function(id) {
+  if (!confirm('Are you sure you want to delete this post?')) return;
+  try {
+    const res = await fetch(`${API_BASE_URL}/posts/${id}?username=${state.currentUser.username}`, { method: 'DELETE' });
+    if (res.ok) {
+      alert('Post deleted!');
+      document.getElementById('post-lightbox').classList.add('hidden');
+      if(state.activeTab === 'profile') loadProfile(state.viewingProfile || state.currentUser.username);
+      else loadFeed();
+    }
+  } catch(e) { console.error(e); }
 }
 
 // Initialize the sandbox
@@ -869,7 +926,7 @@ function refreshActiveTab() {
       resetCreateForm();
       break;
     case 'profile':
-      loadProfile(state.currentUser.username);
+      loadProfile(state.viewingProfile || state.currentUser.username);
       break;
     case 'developer':
       loadDeveloperLogs();
@@ -1748,7 +1805,7 @@ async function loadProfile(username) {
     // Populate elements
     profileAvatar.src = profileUser.profile_picture;
     profileUsername.textContent = `@${profileUser.username}`;
-    profileBio.textContent = profileUser.bio;
+    profileBio.textContent = profileUser.bio || 'No bio yet.';
 
     profilePostsCount.textContent = stats.posts_count;
     profileFollowersCount.textContent = stats.followers.length;
