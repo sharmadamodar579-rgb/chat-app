@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>P.G - Photo & Video Social Sandbox</title>
+  <!-- Modern Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="not-logged-in">
+
+  <!-- Decorative Blurs -->
+  <div class="bg-glow glow-1"></div>
+  <div class="bg-glow glow-2"></div>
+
+  <!-- Login/Signup Fullscreen Screen -->
+  <div id="login-screen" class="login-screen">
+    <!-- Top Left Cobweb SVG -->
+    <div class="cobweb cobweb-tl">
+      <svg viewBox="0 0 100 100">
+        <path d="M0,0 L100,0 M0,0 L0,100 M0,0 L70,70 M0,0 L40,90 M0,0 L90,40" stroke="currentColor" stroke-width="1" fill="none"/>
+        <path d="M20,0 C20,10 10,20 0,20 M40,0 C40,25 25,40 0,40 M60,0 C60,40 40,60 0,60 M80,0 C80,55 55,80 0,80 M100,0 C100,70 70,100 0,100" stroke="currentColor" stroke-width="1" fill="none"/>
+      </svg>
+    </div>
+
+    <!-- Hanging Spiderman Cartoon SVG -->
+    <div class="hanging-spidey">
+      <svg viewBox="0 0 80 150" width="80" height="150">
+        <!-- Web thread -->
+        <line x1="40" y1="0" x2="40" y2="90" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="3 3"/>
+        <!-- Spidey Body (hanging upside down) -->
+        <g transform="translate(0, 70)">
+          <!-- Head -->
+          <ellipse cx="40" cy="50" rx="14" ry="18" fill="var(--spider-red)" stroke="#000000" stroke-width="1.5"/>
+          <!-- Eyes (upside down eyes) -->
+          <path d="M30,46 C32,40 37,42 38,48 C37,48 31,48 30,46 Z" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+          <path d="M50,46 C48,40 43,42 42,48 C43,48 49,48 50,46 Z" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+          
+          <!-- Torso -->
+          <path d="M30,12 L50,12 L46,36 L34,36 Z" fill="var(--spider-red)" stroke="#000000" stroke-width="1.5"/>
+          <path d="M34,12 L40,32 L46,12" stroke="#000000" stroke-width="1" fill="none"/>
+          <path d="M34,22 C37,22 43,22 46,22" stroke="#000000" stroke-width="1" fill="none"/>
+          
+          <!-- Legs (hanging up towards thread) -->
+          <path d="M34,12 L30,-10 L38,-10 L40,12" fill="var(--spider-blue)" stroke="#000000" stroke-width="1.5"/>
+          <path d="M46,12 L50,-10 L42,-10 L40,12" fill="var(--spider-blue)" stroke="#000000" stroke-width="1.5"/>
+          
+          <!-- Arms -->
+          <path d="M30,16 C22,20 25,32 35,32" fill="none" stroke="var(--spider-red)" stroke-width="3" stroke-linecap="round"/>
+          <path d="M50,16 C58,20 55,32 45,32" fill="none" stroke="var(--spider-red)" stroke-width="3" stroke-linecap="round"/>
+          <!-- Spider logo on chest -->
+          <ellipse cx="40" cy="24" rx="2" ry="4" fill="#000000"/>
+          <path d="M40,22 L37,20 M40,22 L43,20 M40,24 L36,24 M40,24 L44,24 M40,26 L37,28 M40,26 L43,28" stroke="#000000" stroke-width="1"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="login-card-container">
+      <div class="music-card glass">
+        <!-- De-branded Music Header -->
+        <div class="music-card-header">
+          <div class="album-art-wrapper">
+            <img src="https://images.unsplash.com/photo-1635805737707-575885ab0820?w=150" alt="Hero Art">
+            <div class="vinyl-record"></div>
+          </div>
+          <div class="track-details">
+            <h3 class="track-title">P.G Hero Theme</h3>
+            <p class="track-artist">P.G Soundtrack</p>
+            <span class="track-badge">P.G SOUNDTRACK</span>
+          </div>
+          <div class="spotify-logo" style="opacity: 0.5;">
+            <!-- Generic music disc SVG instead of Spotify -->
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.48 0-4.5-2.02-4.5-4.5s2.02-4.5 4.5-4.5 4.5 2.02 4.5 4.5-2.02 4.5-4.5 4.5zm0-5.5c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"/>
+            </svg>
+          </div>
+        </div>
+        
+        <!-- Live Waveform Visualizer Canvas -->
+        <div class="visualizer-wrapper" style="padding: 0 15px; margin-bottom: 10px;">
+          <canvas id="login-audio-visualizer" width="360" height="50" style="width: 100%; height: 50px; background: rgba(0, 0, 0, 0.2); border-radius: 8px; display: block; border: 1px solid rgba(255, 255, 255, 0.05);"></canvas>
+        </div>
+
+        <div class="login-form-wrapper">
+          <!-- Step 0: Landing Step (Choose Log In or Create Account) -->
+          <div id="step-landing" class="form-step">
+            <h4 class="step-title">Authentication Protocol</h4>
+            <p class="step-sub">Select an action to access the secure message center.</p>
+            <div class="form-actions" style="display: flex; flex-direction: column; gap: 12px; margin-top: 10px;">
+              <button type="button" id="btn-goto-login" class="btn btn-primary btn-block">Log In</button>
+              <button type="button" id="btn-goto-signup" class="btn btn-secondary btn-block">Create Account</button>
+            </div>
+          </div>
+
+          <!-- Step 1: Login Step -->
+          <div id="step-login" class="form-step hidden">
+            <h4 class="step-title">User Sign In</h4>
+            <p class="step-sub">Enter credentials to authenticate your session.</p>
+            
+            <div class="input-container">
+              <span class="input-icon">👤</span>
+              <input type="text" id="login-credential" placeholder="Username, Email, or Phone...">
+            </div>
+
+            <div class="input-container">
+              <span class="input-icon">🔒</span>
+              <input type="password" id="login-password" placeholder="Enter password...">
+            </div>
+
+            <div class="form-actions" style="margin-top: 6px;">
+              <button type="button" id="btn-login-submit" class="btn btn-primary btn-block">Authenticate</button>
+            </div>
+
+            <div class="auth-footer-links">
+              <button type="button" id="btn-forgot-password-link" class="btn-link">Forgot Password?</button>
+              <button type="button" id="btn-back-to-landing-login" class="btn-link">⬅ Back</button>
+            </div>
+          </div>
+
+          <!-- Step 2a: Signup Contact Choice -->
+          <div id="step-signup-contact" class="form-step hidden">
+            <h4 class="step-title">Create Account</h4>
+            <p class="step-sub">Choose validation contact method first.</p>
+            
+            <div class="auth-tabs">
+              <button type="button" class="auth-tab-btn active" id="signup-tab-email">Email</button>
+              <button type="button" class="auth-tab-btn" id="signup-tab-phone">Phone</button>
+            </div>
+            
+            <div class="input-container" id="signup-email-container">
+              <span class="input-icon">📧</span>
+              <input type="email" id="signup-email" placeholder="Enter your email...">
+            </div>
+
+            <div class="input-container hidden" id="signup-phone-container">
+              <span class="input-icon">📞</span>
+              <input type="tel" id="signup-phone" placeholder="Enter phone (e.g. +1234567890)...">
+            </div>
+
+            <div class="form-actions" style="margin-top: 6px;">
+              <button type="button" id="btn-signup-send-code" class="btn btn-primary btn-block">Send Verification Code</button>
+            </div>
+
+            <div class="auth-footer-links" style="justify-content: flex-end;">
+              <button type="button" id="btn-back-to-landing-signup" class="btn-link">⬅ Back</button>
+            </div>
+          </div>
+
+          <!-- Step 2b: Signup OTP Verification -->
+          <div id="step-signup-otp" class="form-step hidden">
+            <h4 class="step-title">Verify Identity</h4>
+            <p class="step-sub">Enter the 6-digit code sent to your contact.</p>
+
+            <div class="input-container">
+              <span class="input-icon">🔑</span>
+              <input type="text" id="signup-otp-code" placeholder="6-digit code..." maxlength="6">
+            </div>
+
+            <div class="form-actions">
+              <button type="button" id="btn-signup-verify-code" class="btn btn-primary btn-block">Verify Code</button>
+            </div>
+
+            <div class="auth-footer-links" style="justify-content: flex-end;">
+              <button type="button" id="btn-back-to-signup-contact" class="btn-link">⬅ Back</button>
+            </div>
+          </div>
+
+          <!-- Step 2c: Signup Final Credentials -->
+          <div id="step-signup-creds" class="form-step hidden">
+            <h4 class="step-title">Set Credentials</h4>
+            <p class="step-sub">Choose a unique username and a strong password.</p>
+
+            <div class="input-container">
+              <span class="input-icon">👤</span>
+              <input type="text" id="signup-username" placeholder="Choose username...">
+            </div>
+
+            <div class="input-container">
+              <span class="input-icon">🔒</span>
+              <input type="password" id="signup-password" placeholder="Choose password...">
+            </div>
+
+            <!-- Profile Type Selector -->
+            <div class="input-container" style="background: none; border: none; padding: 0 5px; margin-top: 10px; display: flex; align-items: center; gap: 15px; color: var(--text-muted); font-size: 0.9rem;">
+              <span>Account Type:</span>
+              <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; color: #fff;">
+                <input type="radio" name="signup-privacy" value="public" checked style="accent-color: var(--accent-spider-red);"> Public
+              </label>
+              <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; color: #fff;">
+                <input type="radio" name="signup-privacy" value="private" style="accent-color: var(--accent-spider-red);"> Private
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" id="btn-signup-submit" class="btn btn-primary btn-block">Complete Registration</button>
+            </div>
+          </div>
+
+          <!-- Step 3: Forgot Password OTP and Reset -->
+          <div id="step-forgot" class="form-step hidden">
+            <h4 class="step-title">Reset Password</h4>
+            <p class="step-sub">Enter verification code and your new credentials.</p>
+
+            <div class="input-container">
+              <span class="input-icon">🔑</span>
+              <input type="text" id="reset-code" placeholder="6-digit code..." maxlength="6">
+            </div>
+
+            <div class="input-container">
+              <span class="input-icon">🔒</span>
+              <input type="password" id="reset-new-password" placeholder="New password...">
+            </div>
+
+            <div class="form-actions">
+              <button type="button" id="btn-reset-password-submit" class="btn btn-primary btn-block">Reset Password</button>
+            </div>
+
+            <div class="auth-footer-links" style="justify-content: flex-end;">
+              <button type="button" id="btn-cancel-reset" class="btn-link">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Music progress bar -->
+        <div class="music-progress">
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 42%;"></div>
+          </div>
+          <div class="progress-time">
+            <span>1:42</span>
+            <span>4:02</span>
+          </div>
+        </div>
+
+        <!-- Music playback controls -->
+        <div class="music-controls">
+          <button type="button" class="music-ctrl-btn">🔀</button>
+          <button type="button" class="music-ctrl-btn">⏮</button>
+          <button type="button" class="music-ctrl-btn play-btn">▶</button>
+          <button type="button" class="music-ctrl-btn">⏭</button>
+          <button type="button" class="music-ctrl-btn">🔁</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Bar -->
+  <header class="top-bar glass">
+    <div class="top-bar-left">
+      <div class="logo">
+        <span class="logo-first">P.</span><span class="logo-second">G</span>
+      </div>
+    </div>
+    
+    <div class="top-bar-middle">
+      <div class="switcher-container">
+        <label for="identity-switcher">Active Session:</label>
+        <select id="identity-switcher" class="glass-select">
+          <!-- Populated dynamically -->
+        </select>
+      </div>
+    </div>
+
+    <div class="top-bar-right" style="display: flex; align-items: center; gap: 12px;">
+      <button id="btn-theme-toggle" class="btn btn-secondary btn-circle" title="Toggle Light/Dark Theme" style="font-size: 1.1rem; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); color: #fff;">🌓</button>
+      <div class="active-user-profile">
+        <img id="active-user-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150" alt="Avatar">
+        <span id="active-username">@username</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main App Shell -->
+  <div class="app-shell">
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar glass">
+      <button class="nav-item active" data-tab="feed">
+        <span class="icon">🏠</span>
+        <span class="label">Home</span>
+      </button>
+      <button class="nav-item" data-tab="reels">
+        <span class="icon">🎬</span>
+        <span class="label">Social</span>
+      </button>
+      <button class="nav-item" data-tab="search">
+        <span class="icon">🔍</span>
+        <span class="label">Search</span>
+      </button>
+      <button class="nav-item" data-tab="messages">
+        <span class="icon">💬</span>
+        <span class="label">Messages</span>
+        <span id="dm-badge" class="badge hidden">0</span>
+      </button>
+      <button class="nav-item" data-tab="create">
+        <span class="icon">➕</span>
+        <span class="label">Create</span>
+      </button>
+      <button class="nav-item" data-tab="profile">
+        <span class="icon">👤</span>
+        <span class="label">Profile</span>
+      </button>
+      <button class="nav-item" data-tab="developer" id="nav-item-developer" style="display: none;">
+        <span class="icon">🛠️</span>
+        <span class="label">Developer Mode</span>
+      </button>
+      <button class="nav-item" data-tab="settings">
+        <span class="icon">⚙️</span>
+        <span class="label">Settings</span>
+      </button>
+      <button class="nav-item" data-tab="about">
+        <span class="icon">ℹ️</span>
+        <span class="label">About</span>
+      </button>
+      <button class="nav-item nav-logout" id="btn-sidebar-logout" style="margin-top: auto;">
+        <span class="icon">🚪</span>
+        <span class="label">Log Out</span>
+      </button>
+    </nav>
+
+    <!-- Content Workspace -->
+    <main class="content-area">
+      <!-- 1. HOME FEED TAB -->
+      <section id="tab-panel-feed" class="tab-panel active">
+        <!-- Stories Row -->
+        <div class="stories-container glass">
+          <div class="stories-list" id="stories-list">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Feed List -->
+        <div class="feed-list" id="feed-list">
+          <!-- Populated dynamically -->
+        </div>
+      </section>
+
+      <!-- 2. REELS TAB -->
+      <section id="tab-panel-reels" class="tab-panel hidden">
+        <div class="reels-header-controls" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background: rgba(0,0,0,0.2); border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--card-border);">
+          <span style="font-size: 0.95rem; font-weight: 600; color: var(--text-main);">🎬 Cinema Reels</span>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Visual Filter:</span>
+            <select id="reels-filter-select" class="glass-select" style="padding: 4px 10px; font-size: 0.8rem; height: auto; border-radius: 6px;">
+              <option value="none">Original Color</option>
+              <option value="crimson">Crimson Web 🔴</option>
+              <option value="venom">Neon Venom 🟢</option>
+              <option value="noir">1930s Noir 🔳</option>
+              <option value="cyber">Cyber Punk 🌌</option>
+            </select>
+          </div>
+        </div>
+        <div class="reels-deck" id="reels-deck">
+          <!-- Populated dynamically -->
+        </div>
+      </section>
+
+      <!-- Search & Suggestions Tab -->
+      <section id="tab-panel-search" class="tab-panel hidden">
+        <div class="card glass search-card" style="padding: 20px; max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px;">
+          <h2>🔍 Search Profiles</h2>
+          <p class="sub-text" style="margin-bottom: 5px;">Query usernames to initiate secure message threads.</p>
+          
+          <div class="input-container" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;">
+            <span class="input-icon">🔍</span>
+            <input type="text" id="search-users-input" placeholder="Type username to search..." style="flex: 1; background: none; border: none; outline: none; color: #fff; font-family: inherit;">
+          </div>
+
+          <div class="search-results-list" id="search-results" style="display: flex; flex-direction: column; gap: 12px; margin-top: 10px; max-height: 250px; overflow-y: auto;">
+            <!-- Populated dynamically -->
+          </div>
+
+          <div style="border-top: 1px solid rgba(255,255,255,0.08); margin: 10px 0;"></div>
+
+          <h3 style="font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 8px;">🌟 Suggestions (People You May Like)</h3>
+          <div class="suggested-users-list" id="suggested-users" style="display: flex; flex-direction: column; gap: 12px;">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. MESSAGES TAB -->
+      <section id="tab-panel-messages" class="tab-panel hidden">
+        <div class="messages-container glass">
+          <!-- User threads column -->
+          <div class="threads-sidebar">
+            <h3>Chats</h3>
+            <div class="threads-list" id="threads-list">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+          <!-- Chat box column -->
+          <div class="chat-viewport">
+            <div id="chat-header" class="chat-header">
+              <img id="chat-partner-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150" alt="Avatar">
+              <div>
+                <h4 id="chat-partner-name">Select a thread</h4>
+                <p id="chat-partner-bio" class="sub-text">To start messaging</p>
+              </div>
+              <div class="chat-header-actions" id="chat-header-actions" style="margin-left: auto; display: flex; align-items: center; gap: 12px;">
+                <select id="chat-theme-select" class="glass-select hidden" title="Select Chat Theme">
+                  <option value="classic">Classic Dark</option>
+                  <option value="crimson">Crimson Web</option>
+                  <option value="emerald">Emerald Forest</option>
+                  <option value="cyber">Cyber Punk</option>
+                </select>
+                <button type="button" id="btn-voice-call" class="action-btn hidden" title="Voice Call" style="font-size: 1.1rem; background: none; border: none; cursor: pointer;">📞</button>
+                <button type="button" id="btn-video-call" class="action-btn hidden" title="Video Call" style="font-size: 1.1rem; background: none; border: none; cursor: pointer;">📹</button>
+                
+                <div class="dropdown-wrapper" style="position: relative; display: flex; align-items: center;">
+                  <button type="button" id="btn-chat-settings" class="action-btn hidden" title="Chat Settings" style="font-size: 1.1rem; background: none; border: none; cursor: pointer;">⚙️</button>
+                  <div id="chat-settings-dropdown" class="glass hidden" style="position: absolute; right: 0; top: 35px; width: 180px; z-index: 500; display: flex; flex-direction: column; gap: 4px; padding: 8px; border-radius: 12px; background: rgba(18, 14, 33, 0.98); border: 1px solid var(--card-border); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                    <button type="button" class="dropdown-item" id="opt-mute-chat" style="background:none; border:none; color:inherit; font-size:0.85rem; padding:8px 12px; text-align:left; cursor:pointer; width:100%; border-radius:6px; display:flex; align-items:center; gap:8px;">🔕 Mute Chat</button>
+                    <button type="button" class="dropdown-item" id="opt-block-user" style="background:none; border:none; color:inherit; font-size:0.85rem; padding:8px 12px; text-align:left; cursor:pointer; width:100%; border-radius:6px; display:flex; align-items:center; gap:8px;">🚫 Block User</button>
+                    <button type="button" class="dropdown-item" id="opt-ignore-user" style="background:none; border:none; color:inherit; font-size:0.85rem; padding:8px 12px; text-align:left; cursor:pointer; width:100%; border-radius:6px; display:flex; align-items:center; gap:8px;">👁️ Ignore Messages</button>
+                    <button type="button" class="dropdown-item" id="opt-hide-chat" style="background:none; border:none; color:inherit; font-size:0.85rem; padding:8px 12px; text-align:left; cursor:pointer; width:100%; border-radius:6px; display:flex; align-items:center; gap:8px;">🙈 Hide Conversation</button>
+                    <div style="border-top:1px solid rgba(255,255,255,0.08); margin:4px 0;"></div>
+                    <button type="button" class="dropdown-item" id="opt-delete-chat" style="background:none; border:none; color:#ff4444; font-size:0.85rem; padding:8px 12px; text-align:left; cursor:pointer; width:100%; border-radius:6px; display:flex; align-items:center; gap:8px;">🗑️ Delete History</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="chat-messages" id="chat-messages">
+              <div class="no-chat-selected">Select a chat from the sidebar to view thread history.</div>
+            </div>
+            
+            <!-- Message send controls -->
+            <form id="chat-form" class="chat-input-bar">
+              <button type="button" id="btn-camera-pic" class="action-btn" title="Send a disappearing Pic">📷</button>
+              <button type="button" id="btn-voice-record" class="action-btn" title="Record Voice Note" style="background:none; border:none; cursor:pointer; font-size: 1.1rem;">🎙️</button>
+              <button type="button" id="btn-music-share" class="action-btn" title="Share Music Track" style="background:none; border:none; cursor:pointer; font-size: 1.1rem;">🎵</button>
+              <button type="button" id="btn-web-draw" class="action-btn" title="Web Drawing Board" style="background:none; border:none; cursor:pointer; font-size: 1.1rem;">🕸️</button>
+              <input type="text" id="chat-input" placeholder="Message..." disabled>
+              <button type="submit" id="chat-send" class="btn-send" disabled>Send</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. CREATE TAB -->
+      <section id="tab-panel-create" class="tab-panel hidden">
+        <div class="card glass create-post-card">
+          <h2>Create New Post / Social / Story</h2>
+          <p class="sub-text">Share your photos, short videos, or stories instantly.</p>
+
+          <form id="create-post-form">
+            <div class="input-group">
+              <label>Select Type</label>
+              <div class="type-selectors">
+                <label class="radio-label">
+                  <input type="radio" name="post-type" value="post" checked> Post (Feed Image)
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="post-type" value="reel"> Social (Short Video)
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="post-type" value="story"> Story (24h Disappearing)
+                </label>
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label>Media Source</label>
+              <div style="display: flex; gap: 8px; width: 100%;">
+                <input type="text" id="post-media-url" placeholder="Paste an image or mp4 URL..." required style="flex: 1;">
+                <button type="button" id="btn-camera-snap-post" class="btn btn-secondary" style="padding: 10px 14px; border-radius: 12px; display: flex; align-items: center; gap: 6px;"><span style="font-size:1rem;">📷</span> Snap</button>
+              </div>
+              
+              <!-- Quick Stock Templates -->
+              <div class="media-templates">
+                <span class="template-title">Use Stock Template:</span>
+                <button type="button" class="btn-template" data-url="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800" data-type="post">Sunset Forest</button>
+                <button type="button" class="btn-template" data-url="https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=800" data-type="post">Ocean Rain</button>
+                <button type="button" class="btn-template" data-url="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4" data-type="reel">Animated Escape (Video)</button>
+                <button type="button" class="btn-template" data-url="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=800" data-type="story">Portrait Story</button>
+              </div>
+            </div>
+
+            <div class="input-group" id="caption-group">
+              <label for="post-caption">Caption</label>
+              <textarea id="post-caption" placeholder="Write a caption..." rows="3"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Publish</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- 5. PROFILE TAB -->
+      <section id="tab-panel-profile" class="tab-panel hidden">
+        <!-- Profile Header -->
+        <div class="card glass profile-header-card">
+          <div class="profile-header-info">
+            <img id="profile-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150" alt="Avatar">
+            <div class="profile-meta">
+              <div class="profile-name-row">
+                <h2 id="profile-username">@username</h2>
+                <button id="btn-follow-toggle" class="btn btn-secondary">Follow</button>
+              </div>
+              <div class="profile-stats">
+                <span><strong id="profile-posts-count">0</strong> posts</span>
+                <span><strong id="profile-followers-count">0</strong> followers</span>
+                <span><strong id="profile-following-count">0</strong> following</span>
+              </div>
+              
+              <div class="bio-container">
+                <p id="profile-bio" class="bio-text">Bio description...</p>
+                <div id="bio-edit-box" class="hidden">
+                  <textarea id="input-bio" class="glass-textarea" rows="2" placeholder="Write your bio..." maxlength="150"></textarea>
+                  <div class="bio-edit-actions">
+                    <button id="btn-save-bio" class="btn btn-primary btn-sm">Save</button>
+                    <button id="btn-cancel-bio" class="btn btn-secondary btn-sm">Cancel</button>
+                  </div>
+                </div>
+                <button id="btn-edit-bio-toggle" class="btn btn-secondary btn-sm hidden">✏️ Edit Bio</button>
+                <button id="btn-share-profile" class="btn btn-secondary btn-sm" style="display: inline-block; margin-left: 8px;">🔗 Share Profile</button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Gallery Sub-tabs (Photos / Videos) -->
+        <div class="profile-gallery-tabs glass">
+          <button class="profile-tab-btn active" data-tab-filter="post">🖼️ Photos</button>
+          <button class="profile-tab-btn" data-tab-filter="reel">🎥 Videos</button>
+          <button class="profile-tab-btn" data-tab-filter="saved" id="profile-tab-saved">🔖 Saved</button>
+        </div>
+
+        <!-- Profile Gallery Grid -->
+        <div class="profile-gallery-grid" id="profile-gallery">
+          <!-- Populated dynamically -->
+        </div>
+      </section>
+
+      <!-- 6. DEVELOPER MODE TAB -->
+      <section id="tab-panel-developer" class="tab-panel hidden">
+        <div class="card glass developer-card">
+          <h2>🛠️ Developer Control Center</h2>
+          <p class="sub-text">Exclusive admin tools to audit messages, inspect database schemas, and download live assets.</p>
+
+          <div class="developer-sections" style="display: flex; flex-direction: column; gap: 24px; margin-top: 15px;">
+            <div class="dev-section card glass" style="padding: 20px; border: 1px solid rgba(255, 255, 255, 0.15);">
+              <h3>📦 Database Downloads</h3>
+              <p class="sub-text" style="margin-bottom: 12px;">Directly download SQLite database files representing sandbox storage.</p>
+              <div class="dev-actions-row" style="display: flex; gap: 12px;">
+                <button type="button" id="btn-download-pg-db" class="btn btn-primary">Download Main DB (pg.db)</button>
+                <button type="button" id="btn-download-vault-db" class="btn btn-secondary">Download Vault DB (vault.db)</button>
+              </div>
+            </div>
+
+            <div class="dev-section card glass" style="padding: 20px; border: 1px solid rgba(255, 255, 255, 0.15);">
+              <h3>🕵️ E2EE Decrypted Chat Audit Logger</h3>
+              <p class="sub-text" style="margin-bottom: 12px;">All messages are fetched in raw ciphertext from the database and decrypted on-the-fly using escrowed keys.</p>
+              <div class="audit-log-box" id="audit-log-box" style="background: rgba(0, 0, 0, 0.3); border-radius: 8px; max-height: 350px; overflow-y: auto; padding: 15px; font-family: 'Fira Code', monospace; font-size: 0.85rem; border: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-direction: column; gap: 10px;">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. SETTINGS TAB -->
+      <section id="tab-panel-settings" class="tab-panel hidden">
+        <div class="card glass settings-card" style="padding: 24px; max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
+          <h2>⚙️ Account Settings</h2>
+          <p class="sub-text">Manage your privacy preferences, active sessions, and social blocks.</p>
+
+          <!-- Account Privacy Toggle -->
+          <div class="card glass" style="padding: 16px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255, 255, 255, 0.1);">
+            <div>
+              <h3 style="font-size: 1.1rem; margin-bottom: 4px;">🔒 Account Privacy</h3>
+              <p class="sub-text" style="font-size: 0.85rem;">When your account is Private, only people who follow you can view your posts and reels.</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span id="privacy-status-text" style="font-size: 0.9rem; font-weight: 600; color: var(--accent-pink);">Public</span>
+              <label class="switch-toggle" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                <input type="checkbox" id="privacy-toggle-checkbox" style="opacity: 0; width: 0; height: 0; cursor: pointer;">
+                <span class="switch-slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.15); transition: .4s; border-radius: 24px;"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Ignored & Blocked Accounts List -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="card glass" style="padding: 16px; border: 1px solid rgba(255, 255, 255, 0.1); display: flex; flex-direction: column; gap: 10px;">
+              <h3 style="font-size: 1rem; margin-bottom: 2px;">🚫 Blocked Accounts</h3>
+              <div id="settings-blocked-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 150px; overflow-y: auto;">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+
+            <div class="card glass" style="padding: 16px; border: 1px solid rgba(255, 255, 255, 0.1); display: flex; flex-direction: column; gap: 10px;">
+              <h3 style="font-size: 1rem; margin-bottom: 2px;">🔕 Ignored Accounts</h3>
+              <div id="settings-ignored-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 150px; overflow-y: auto;">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Active Login Sessions Table -->
+          <div class="card glass" style="padding: 16px; border: 1px solid rgba(255, 255, 255, 0.1); display: flex; flex-direction: column; gap: 10px;">
+            <h3 style="font-size: 1.1rem; margin-bottom: 2px;">🌐 Device Login Sessions</h3>
+            <p class="sub-text" style="font-size: 0.85rem;">Inspect active and past login sessions for this account.</p>
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+                <thead>
+                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-muted);">
+                    <th style="padding: 8px;">Date/Time</th>
+                    <th style="padding: 8px;">IP Address</th>
+                    <th style="padding: 8px;">Location</th>
+                    <th style="padding: 8px;">Device/Browser</th>
+                  </tr>
+                </thead>
+                <tbody id="settings-sessions-body">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Deactivate Account Button -->
+          <div class="card glass" style="padding: 16px; border: 1px solid rgba(226, 27, 27, 0.25); background: rgba(226, 27, 27, 0.05); display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <h3 style="font-size: 1.1rem; margin-bottom: 4px; color: #ff5252;">⚠️ Deactivate Profile</h3>
+              <p class="sub-text" style="font-size: 0.85rem; color: var(--text-muted);">Temporarily hide your profile. You have 10 days to log back in and restore your account before complete deletion.</p>
+            </div>
+            <button type="button" id="btn-deactivate-profile" class="btn btn-secondary" style="background: rgba(226, 27, 27, 0.2); border-color: rgba(226, 27, 27, 0.4); color: #ff5252;">Deactivate</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. ABOUT TAB -->
+      <section id="tab-panel-about" class="tab-panel hidden">
+        <div class="card glass about-card" style="padding: 24px; max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; text-align: center;">
+          <h2 style="font-size: 2.2rem; margin-bottom: 5px;">ℹ️ About P.G Social</h2>
+          
+          <div class="album-art-wrapper" style="width: 150px; height: 150px; margin: 0 auto;">
+            <img src="https://images.unsplash.com/photo-1635805737707-575885ab0820?w=150" alt="Hero Art" style="border-radius: 50%;">
+            <div class="vinyl-record" style="animation: spin 8s linear infinite;"></div>
+          </div>
+
+          <div class="about-content" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 20px; min-height: 120px; font-size: 1rem; line-height: 1.6; text-align: left; white-space: pre-wrap;" id="about-display-text">
+            <!-- Populated dynamically -->
+          </div>
+
+          <!-- Admin Editor (restricted to admin) -->
+          <div id="about-admin-editor" class="card glass hidden" style="padding: 16px; border: 1px solid rgba(255,255,255,0.1); text-align: left; display: flex; flex-direction: column; gap: 12px; margin-top: 10px;">
+            <h3 style="font-size: 1.1rem; margin-bottom: 2px;">✏️ Modify About Section (Admin Only)</h3>
+            <textarea id="about-editor-textarea" style="width: 100%; height: 100px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; padding: 10px; font-family: inherit; outline: none; resize: vertical;"></textarea>
+            <button type="button" id="btn-save-about-text" class="btn btn-primary" style="align-self: flex-end;">Save Changes</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Fullscreen Disappearing Pic Modal overlay -->
+  <div id="pic-overlay" class="pic-overlay hidden">
+    <div class="pic-header">
+      <span id="pic-sender-label">Pic from @sender</span>
+      <div id="pic-timer" class="pic-timer-badge">5s</div>
+    </div>
+    <div class="pic-content-wrapper">
+      <img id="pic-image-view" src="" alt="Pic Content">
+    </div>
+    <div class="pic-footer-label">Click anywhere or wait to close pic</div>
+  </div>
+
+  <!-- Story Overlay Modal -->
+  <div id="story-overlay" class="pic-overlay hidden">
+    <!-- Story Progress Bar -->
+    <div class="story-progress-bar-container">
+      <div id="story-progress-fill" class="story-progress-fill"></div>
+    </div>
+    <div class="pic-header">
+      <span id="story-owner-label">@username's Story</span>
+      <button id="btn-close-story" class="btn-close-overlay">✕</button>
+    </div>
+    <div class="pic-content-wrapper">
+      <img id="story-image-view" src="" alt="Story Content">
+    </div>
+  </div>
+
+  <!-- Preset Pics Picker Modal -->
+  <div id="pic-picker" class="modal-picker hidden">
+    <div class="modal-picker-content glass">
+      <h3>Select a Pic to Send</h3>
+      <p class="sub-text">Choose an image or take a live camera snapshot.</p>
+      
+      <div class="pic-options" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px;">
+        <div class="pic-option" data-url="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400">
+          <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=100" alt="Option 1" style="width:100%; height:60px; object-fit:cover; border-radius:6px;">
+          <span style="font-size:0.75rem;">Sneaker 👟</span>
+        </div>
+        <div class="pic-option" data-url="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400">
+          <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=100" alt="Option 2" style="width:100%; height:60px; object-fit:cover; border-radius:6px;">
+          <span style="font-size:0.75rem;">Phones 🎧</span>
+        </div>
+        <div class="pic-option" data-url="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400">
+          <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=100" alt="Option 3" style="width:100%; height:60px; object-fit:cover; border-radius:6px;">
+          <span style="font-size:0.75rem;">Watch ⌚</span>
+        </div>
+        <div class="pic-option-camera" id="btn-camera-snap-pic" style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.06); border: 1.5px dashed rgba(255,255,255,0.2); border-radius: 8px; cursor: pointer; text-align: center; height: 90px; gap: 4px;">
+          <span style="font-size: 1.5rem;">📷</span>
+          <span style="font-size: 0.7rem; font-weight: 600;">Snap Photo</span>
+        </div>
+      </div>
+      
+      <button id="btn-cancel-picker" class="btn btn-secondary">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Calling Overlay Modal -->
+  <div id="calling-modal" class="pic-overlay hidden">
+    <div class="calling-container glass">
+      <div class="calling-header">
+        <h3 id="calling-status">Simulating Call...</h3>
+        <p id="calling-user-label">@username</p>
+      </div>
+      <div class="calling-streams">
+        <div class="video-stream-box local-video-box">
+          <video id="local-video" autoplay muted playsinline></video>
+          <span class="video-label">Self Camera (Local)</span>
+        </div>
+        <div class="video-stream-box remote-video-box">
+          <div class="ringing-indicator" id="ringing-indicator">
+            <span class="calling-icon">📞</span>
+          </div>
+          <video id="remote-video" autoplay playsinline style="display: none;"></video>
+          <span class="video-label" id="remote-video-label">Awaiting Connection...</span>
+        </div>
+      </div>
+      <div class="calling-actions">
+        <button type="button" id="btn-end-call" class="btn btn-danger">End Call</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Camera Capture Modal -->
+  <div id="camera-modal" class="pic-overlay hidden" style="z-index: 2000; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center;">
+    <div class="card glass" style="max-width: 480px; width: 90%; padding: 20px; display: flex; flex-direction: column; gap: 15px; text-align: center; border: 1px solid var(--card-border);">
+      <h3>📷 Live Capture</h3>
+      <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 5px;">
+        <span style="font-size: 0.8rem; color: var(--text-muted);">Visual Shader:</span>
+        <select id="camera-filter-select" class="glass-select" style="padding: 4px 8px; font-size: 0.8rem; height: auto;">
+          <option value="none">Original Color</option>
+          <option value="crimson">Crimson Web 🔴</option>
+          <option value="venom">Neon Venom 🟢</option>
+          <option value="noir">1930s Noir 🔳</option>
+          <option value="cyber">Cyber Punk 🌌</option>
+        </select>
+      </div>
+      <video id="camera-preview" autoplay playsinline style="width: 100%; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: #000; transform: scaleX(-1);"></video>
+      <div class="camera-actions" style="display: flex; gap: 12px; justify-content: center;">
+        <button type="button" id="btn-camera-capture" class="btn btn-primary">📸 Snap Photo</button>
+        <button type="button" id="btn-camera-close" class="btn btn-secondary">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Music Track Picker Modal -->
+  <div id="music-share-picker" class="modal-picker hidden" style="z-index: 1900;">
+    <div class="modal-picker-content glass" style="max-width: 400px; width: 90%; padding: 20px;">
+      <h3>🎵 Select a Track to Share</h3>
+      <p class="sub-text">Pick a theme song to share in chat.</p>
+      
+      <div class="music-track-options" style="display: flex; flex-direction: column; gap: 10px; margin: 15px 0;">
+        <div class="track-option-item card glass" data-track-id="chimes" style="display:flex; align-items:center; gap:12px; padding:10px; border-radius:8px; cursor:pointer;">
+          <div style="font-size:1.5rem; background:rgba(255,255,255,0.06); padding:6px; border-radius:6px;">🔔</div>
+          <div style="text-align:left;">
+            <div style="font-weight:600; font-size:0.9rem;">P.G Hero Chimes</div>
+            <div style="font-size:0.75rem; color:var(--text-muted);">Sweet synth arpeggios</div>
+          </div>
+        </div>
+        <div class="track-option-item card glass" data-track-id="danger" style="display:flex; align-items:center; gap:12px; padding:10px; border-radius:8px; cursor:pointer;">
+          <div style="font-size:1.5rem; background:rgba(255,255,255,0.06); padding:6px; border-radius:6px;">🔥</div>
+          <div style="text-align:left;">
+            <div style="font-weight:600; font-size:0.9rem;">Synth Danger Melody</div>
+            <div style="font-size:0.75rem; color:var(--text-muted);">Fast energetic beats</div>
+          </div>
+        </div>
+        <div class="track-option-item card glass" data-track-id="swing" style="display:flex; align-items:center; gap:12px; padding:10px; border-radius:8px; cursor:pointer;">
+          <div style="font-size:1.5rem; background:rgba(255,255,255,0.06); padding:6px; border-radius:6px;">🎷</div>
+          <div style="text-align:left;">
+            <div style="font-weight:600; font-size:0.9rem;">Brooklyn Swing Melody</div>
+            <div style="font-size:0.75rem; color:var(--text-muted);">Retro jazz chord sequence</div>
+          </div>
+        </div>
+      </div>
+      
+      <button id="btn-cancel-music" class="btn btn-secondary" style="width: 100%;">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Toast Notification Overlay Portal -->
+  <div id="toast-container" style="position: fixed; top: 80px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none;"></div>
+
+  <!-- Hidden File Input for Avatars -->
+  <input type="file" id="input-avatar-file" accept="image/*" style="display: none;">
+
+  <!-- Post Lightbox Modal -->
+  <div id="post-lightbox-modal" class="pic-overlay hidden" style="backdrop-filter: blur(25px); display: flex; align-items: center; justify-content: center; padding: 20px;">
+    <button id="btn-close-lightbox" class="btn-close-overlay" style="top: 20px; right: 20px; z-index: 10;">✕</button>
+    <div class="lightbox-card card glass" style="display: flex; flex-direction: row; width: 90%; max-width: 960px; height: 80vh; max-height: 700px; padding: 0; overflow: hidden; border: 1px solid var(--card-border); pointer-events: auto;">
+      
+      <!-- Left side: Media (Image or Video) -->
+      <div class="lightbox-media-container" style="flex: 1.2; background: #000; display: flex; align-items: center; justify-content: center; position: relative; height: 100%;">
+        <div id="lightbox-media-wrapper" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;"></div>
+        <!-- Web effect splash overlay -->
+        <div id="lightbox-web-splash" class="web-splash-overlay hidden">🕸️</div>
+      </div>
+
+      <!-- Right side: Details & Social interaction -->
+      <div class="lightbox-info-container" style="flex: 1; display: flex; flex-direction: column; height: 100%; border-left: 1px solid var(--card-border); background: var(--bg-secondary);">
+        <!-- Header: User info & Follow & Delete -->
+        <div class="lightbox-header" style="display: flex; align-items: center; justify-content: space-between; padding: 15px; border-bottom: 1px solid var(--card-border);">
+          <div class="post-user" id="lightbox-post-user" style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+            <img id="lightbox-avatar" src="" alt="" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">
+            <h4 id="lightbox-username" style="margin: 0; font-size: 0.95rem; font-weight: 600;">@username</h4>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button id="btn-lightbox-delete" class="btn btn-secondary" style="background: rgba(226, 27, 27, 0.15); border: 1px solid rgba(226, 27, 27, 0.3); color: #ff5252; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; display: none;">Delete</button>
+          </div>
+        </div>
+
+        <!-- Comments and caption scroll area -->
+        <div class="lightbox-body" style="flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
+          <div class="lightbox-caption-row" style="display: flex; gap: 10px; align-items: flex-start; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+            <img id="lightbox-caption-avatar" src="" alt="" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+            <div style="font-size: 0.9rem;">
+              <strong id="lightbox-caption-username">@username</strong>
+              <p id="lightbox-caption-text" style="display: inline; margin-left: 5px; color: var(--text-main); white-space: pre-wrap;"></p>
+              <div id="lightbox-post-time" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Time</div>
+            </div>
+          </div>
+          <div id="lightbox-comments-list" style="display: flex; flex-direction: column; gap: 12px;">
+            <!-- Dynamic comments row -->
+          </div>
+        </div>
+
+        <!-- Likes counter, save and actions -->
+        <div class="lightbox-actions-panel" style="padding: 15px; border-top: 1px solid var(--card-border); display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; gap: 12px;">
+              <button id="btn-lightbox-like" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; padding: 0;">🤍</button>
+              <button id="btn-lightbox-share" style="background: none; border: none; font-size: 1.4rem; cursor: pointer; padding: 0; color: var(--text-muted);" title="Share Post">🔗</button>
+            </div>
+            <button id="btn-lightbox-save" style="background: none; border: none; font-size: 1.4rem; cursor: pointer; padding: 0; color: var(--text-muted);" title="Save Post">🔖</button>
+          </div>
+          <div id="lightbox-likes-count" style="font-weight: 600; font-size: 0.9rem;">0 likes</div>
+        </div>
+
+        <!-- Add comment form -->
+        <form id="lightbox-comment-form" style="display: flex; border-top: 1px solid var(--card-border); padding: 10px 15px; background: rgba(0,0,0,0.1);">
+          <input type="text" id="lightbox-comment-input" placeholder="Add a comment..." required style="flex: 1; background: none; border: none; outline: none; color: #fff; font-family: inherit; font-size: 0.9rem;">
+          <button type="submit" style="background: none; border: none; color: var(--accent-pink); font-weight: 600; cursor: pointer; font-size: 0.9rem;">Post</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Direct Share Modal -->
+  <div id="share-modal" class="pic-overlay hidden" style="backdrop-filter: blur(15px); display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 10000;">
+    <div class="card glass share-popup-card" style="width: 100%; max-width: 400px; padding: 20px; border-radius: 16px; border: 1px solid var(--card-border); display: flex; flex-direction: column; gap: 15px; pointer-events: auto;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="margin: 0; font-size: 1.2rem;">Share to Friends</h3>
+        <button id="btn-close-share-modal" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted);">✕</button>
+      </div>
+      <p class="sub-text" style="font-size: 0.85rem; margin: 0;">Send this content directly to your followed friends in the app.</p>
+      
+      <div id="share-friends-list" style="display: flex; flex-direction: column; gap: 10px; max-height: 250px; overflow-y: auto; padding: 5px 0;">
+        <!-- Populated dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Web Drawing Modal -->
+  <div id="web-draw-modal" class="pic-overlay hidden" style="backdrop-filter: blur(20px); display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 10100;">
+    <div class="card glass web-draw-card" style="width: 100%; max-width: 500px; padding: 20px; border-radius: 16px; border: 1px solid var(--card-border); display: flex; flex-direction: column; gap: 15px; pointer-events: auto; text-align: center;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="margin: 0; font-size: 1.2rem;">🕸️ Web Drawing Board</h3>
+        <button id="btn-close-draw-modal" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted);">✕</button>
+      </div>
+      <p class="sub-text" style="font-size: 0.85rem; margin: 0;">Draw a glowing spider-web graffiti and send it to your friend.</p>
+      
+      <div class="canvas-container" style="position: relative; background: #080610; border-radius: 12px; border: 1.5px dashed rgba(255, 255, 255, 0.15); overflow: hidden; height: 300px; display: flex; align-items: center; justify-content: center;">
+        <canvas id="draw-canvas" width="460" height="300" style="cursor: crosshair; width: 100%; height: 100%; display: block;"></canvas>
+      </div>
+
+      <div class="draw-controls" style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+        <div style="display: flex; gap: 6px; align-items: center;">
+          <span style="font-size: 0.8rem; color: var(--text-muted);">Color:</span>
+          <button type="button" class="color-btn active" data-color="#ff2d2d" style="width: 24px; height: 24px; border-radius: 50%; border: 2px solid #fff; background: #ff2d2d; cursor: pointer; padding: 0; outline: none;"></button>
+          <button type="button" class="color-btn" data-color="#3b82f6" style="width: 24px; height: 24px; border-radius: 50%; border: 2px solid transparent; background: #3b82f6; cursor: pointer; padding: 0; outline: none;"></button>
+          <button type="button" class="color-btn" data-color="#39ff14" style="width: 24px; height: 24px; border-radius: 50%; border: 2px solid transparent; background: #39ff14; cursor: pointer; padding: 0; outline: none;"></button>
+          <button type="button" class="color-btn" data-color="#ffffff" style="width: 24px; height: 24px; border-radius: 50%; border: 2px solid transparent; background: #ffffff; cursor: pointer; padding: 0; outline: none;"></button>
+        </div>
+        <div style="display: flex; gap: 6px; align-items: center;">
+          <span style="font-size: 0.8rem; color: var(--text-muted);">Brush:</span>
+          <select id="draw-size-select" class="glass-select" style="padding: 3px 6px; font-size: 0.8rem; height: auto;">
+            <option value="3">Thin</option>
+            <option value="6" selected>Normal</option>
+            <option value="12">Thick</option>
+            <option value="20">Web Shooter</option>
+          </select>
+        </div>
+        <button type="button" id="btn-clear-draw" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem; border-radius: 6px;">Clear</button>
+      </div>
+
+      <div style="display: flex; gap: 12px; margin-top: 5px;">
+        <button type="button" id="btn-cancel-draw" class="btn btn-secondary" style="flex: 1;">Cancel</button>
+        <button type="button" id="btn-send-draw" class="btn btn-primary" style="flex: 1;">Send Web Sketch</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="crypto.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
