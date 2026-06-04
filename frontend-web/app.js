@@ -773,7 +773,7 @@ function switchTab(tabId) {
   refreshActiveTab();
 }
 
-refreshActiveTab() {
+function refreshActiveTab() {
   switch (state.activeTab) {
     case 'feed':
       loadStories();
