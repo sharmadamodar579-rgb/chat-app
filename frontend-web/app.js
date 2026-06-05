@@ -96,7 +96,8 @@ document.addEventListener('click', (e) => {
 
 async function viewUserProfile(username) {
   state.viewingProfile = username;
-  // Switch to profile tab
+  
+  // Switch to profile tab in UI
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.querySelector('.nav-item[data-tab="profile"]').classList.add('active');
   state.activeTab = 'profile';
@@ -105,102 +106,8 @@ async function viewUserProfile(username) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
   document.getElementById('tab-panel-profile').classList.remove('hidden');
 
-  // Fetch their profile
-  const allUsersRes = await fetch(`${API_BASE_URL}/users`);
-  const users = await allUsersRes.json();
-  const profileUser = users.find(u => u.username === username);
-  
-  if (profileUser) {
-    document.getElementById('profile-username').textContent = '@' + profileUser.username;
-    document.getElementById('profile-avatar').src = profileUser.profile_picture;
-    document.getElementById('profile-bio').textContent = profileUser.bio || 'No bio yet.';
-    
-    // Hide edit bio button, maybe show follow button
-    const btnEditBio = document.getElementById('btn-edit-bio-toggle');
-    const btnFollowToggle = document.getElementById('btn-follow-toggle');
-    
-    if (username === state.currentUser.username) {
-      if (btnFollowToggle) btnFollowToggle.classList.add('hidden');
-      
-    const btnEditBio = document.getElementById('btn-edit-bio-toggle');
-    const bioEditBox = document.getElementById('bio-edit-box');
-    const inputBio = document.getElementById('input-bio');
-    const btnSaveBio = document.getElementById('btn-save-bio');
-    const btnCancelBio = document.getElementById('btn-cancel-bio');
-
-    if (username === state.currentUser.username) {
-      if (btnEditBio) {
-        btnEditBio.classList.remove('hidden');
-        btnEditBio.onclick = () => {
-          bioEditBox.classList.remove('hidden');
-          profileBio.classList.add('hidden');
-          inputBio.value = profileUser.bio || '';
-        };
-      }
-      if (btnCancelBio) {
-        btnCancelBio.onclick = () => {
-          bioEditBox.classList.add('hidden');
-          profileBio.classList.remove('hidden');
-        };
-      }
-      if (btnSaveBio) {
-        btnSaveBio.onclick = async () => {
-          const newBio = inputBio.value.trim();
-          try {
-            const res = await fetch(`${API_BASE_URL}/users/update-bio`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ username: state.currentUser.username, bio: newBio })
-            });
-            if (res.ok) {
-              profileBio.textContent = newBio;
-              state.currentUser.bio = newBio;
-              bioEditBox.classList.add('hidden');
-              profileBio.classList.remove('hidden');
-            }
-          } catch(e) { console.error(e); }
-        };
-      }
-    }
-
-    } else {
-      if (btnEditBio) btnEditBio.classList.add('hidden');
-      if (btnFollowToggle) {
-        btnFollowToggle.classList.remove('hidden');
-        btnFollowToggle.setAttribute('data-target-user', username);
-        // Check if following
-        const relRes = await fetch(`${API_BASE_URL}/social/relations/${state.currentUser.username}`);
-        const stats = await relRes.json();
-        const following = stats.following || [];
-        if (following.includes(username)) {
-          btnFollowToggle.textContent = 'Unfollow';
-          btnFollowToggle.classList.replace('btn-secondary', 'btn-danger');
-        } else {
-          btnFollowToggle.textContent = 'Follow';
-          btnFollowToggle.classList.replace('btn-danger', 'btn-secondary');
-        }
-      }
-    }
-    
-    // Load their stats and posts
-    const relRes = await fetch(`${API_BASE_URL}/social/relations/${username}`);
-    const stats = await relRes.json();
-    document.getElementById('profile-followers-count').textContent = (stats.followers || []).length;
-    document.getElementById('profile-following-count').textContent = (stats.following || []).length;
-
-    const feedRes = await fetch(`${API_BASE_URL}/posts/feed/${username}`);
-    const allFeed = await feedRes.json();
-    const ownPosts = allFeed.filter(p => p.username === username);
-    document.getElementById('profile-posts-count').textContent = ownPosts.length;
-    
-    const gallery = document.getElementById('profile-gallery');
-    gallery.innerHTML = ownPosts.map(p => {
-      if (p.type === 'reel') {
-        return `<div class="gallery-item"><video src="${p.media_url}" autoplay loop muted style="width:100%; height:100%; object-fit:cover;"></video><span style="position:absolute; top:5px; right:5px;">🎥</span></div>`;
-      }
-      return `<div class="gallery-item"><img src="${p.media_url}"></div>`;
-    }).join('');
-  }
+  // Simply leverage the robust loadProfile function
+  loadProfile(username);
 }
 
 
