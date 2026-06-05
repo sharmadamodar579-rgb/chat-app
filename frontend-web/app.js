@@ -124,6 +124,26 @@ window.deletePost = async function(id) {
   } catch(e) { console.error(e); }
 }
 
+
+async function apiFetch(url, options = {}) {
+  const res = await fetch(url, options);
+  if (!res.ok) throw new Error('Request failed');
+  return res.json();
+}
+function showUploadOverlay(show) {
+  const el = document.getElementById('upload-loading-overlay');
+  if(el) el.style.display = show ? 'flex' : 'none';
+}
+document.addEventListener('click', (() => {
+  let cooldown = false;
+  return (e) => {
+    if(e.target.closest('#btn-follow-toggle')) {
+      if(cooldown) { e.stopImmediatePropagation(); e.preventDefault(); return; }
+      cooldown = true; setTimeout(() => cooldown = false, 600);
+    }
+  };
+})(), true);
+
 // Initialize the sandbox
 async function init() {
   try {
@@ -1700,9 +1720,7 @@ function resetCreateForm() {
 async function loadProfile(username) {
   try {
     // A. Fetch profile owner details
-    const allUsersRes = await fetch(`${API_BASE_URL}/users`);
-    const users = await allUsersRes.json();
-    const profileUser = users.find(u => u.username === username);
+    const profileUser = await apiFetch(`${API_BASE_URL}/users/${username}`).catch(()=>null);
     if (!profileUser) return;
 
     // B. Fetch followers/relations stats

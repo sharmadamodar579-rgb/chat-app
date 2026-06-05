@@ -8,6 +8,12 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
+
+app.use((req, res, next) => {
+  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://res.cloudinary.com; media-src 'self' data: blob: https://res.cloudinary.com; connect-src 'self'");
+  next();
+});
+
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
@@ -26,6 +32,18 @@ app.get('/api/health', (req, res) => {
 });
 
 // 1. Get all registered profiles
+
+app.get('/api/users/:username', async (req, res) => {
+  const { username } = req.params;
+  try {
+    const user = await db.queryGet('SELECT id, username, profile_picture, bio FROM users WHERE username = ?', [username]);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed' });
+  }
+});
+
 app.get('/api/users', async (req, res) => {
   try {
     const users = await db.queryAll(`SELECT * FROM users WHERE deactivated_at IS NULL ORDER BY username ASC`);
@@ -456,6 +474,25 @@ app.get('/api/posts/reels', async (req, res) => {
 });
 
 // 4. Create Post or Reel
+
+let _cloudinary = null;
+try {
+  _cloudinary = require('cloudinary').v2;
+} catch(e) {}
+
+app.post('/api/upload', async (req, res) => {
+  const { data, folder } = req.body;
+  if (!data) return res.status(400).json({ error: 'No data' });
+  if (!_cloudinary || !process.env.CLOUDINARY_URL) return res.json({ url: data });
+  try {
+    _cloudinary.config({ cloudinary_url: process.env.CLOUDINARY_URL });
+    const result = await _cloudinary.uploader.upload(data, { folder: folder || 'pg-chat', resource_type: 'auto' });
+    res.json({ url: result.secure_url });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.post('/api/posts/create', async (req, res) => {
   const { username, type, media_url, caption } = req.body;
   if (!username || !type || !media_url) {
@@ -755,11 +792,23 @@ app.get('/api/posts/saved/:username', async (req, res) => {
 });
 
 // 19. Delete post (Reel or Post)
+
 app.delete('/api/posts/:id', async (req, res) => {
   const { id } = req.params;
-  const { username } = req.query;
-  if (!username) {
-    return res.status(400).json({ error: 'Missing username' });
+  const username = req.query.username || (req.body && req.body.username);
+  if (!username) return res.status(401).json({ error: 'Username required' });
+  try {
+    const post = await db.queryGet('SELECT username FROM posts WHERE id = ?', [id]);
+    if (!post || (post.username !== username && username !== 'admin')) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+    await db.queryRun(`DELETE FROM posts WHERE id = ?`, [id]);
+    await db.queryRun(`DELETE FROM likes WHERE post_id = ?`, [id]);
+    await db.queryRun(`DELETE FROM comments WHERE post_id = ?`, [id]);
+    await db.queryRun(`DELETE FROM saved_posts WHERE post_id = ?`, [id]);
+    res.json({ success: true });
+  } catch (err) { res.status(500).json({ error: 'Failed' }); }
+});
 
 app.delete('/api/stories/:id', async (req, res) => {
   const { id } = req.params;
@@ -768,24 +817,6 @@ app.delete('/api/stories/:id', async (req, res) => {
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: 'Failed to delete story' });
-  }
-});
-  }
-  try {
-    const post = await db.queryGet(`SELECT * FROM posts WHERE id = ?`, [id]);
-    if (!post) {
-      return res.status(404).json({ error: 'Post not found' });
-    }
-    if (post.username !== username && username !== 'admin') {
-      return res.status(403).json({ error: 'Permission denied' });
-    }
-    await db.queryRun(`DELETE FROM posts WHERE id = ?`, [id]);
-    await db.queryRun(`DELETE FROM likes WHERE post_id = ?`, [id]);
-    await db.queryRun(`DELETE FROM comments WHERE post_id = ?`, [id]);
-    await db.queryRun(`DELETE FROM saved_posts WHERE post_id = ?`, [id]);
-    res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
   }
 });
 
